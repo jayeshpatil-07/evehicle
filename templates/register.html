@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register | EV Charging Locator</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+:root{
+  --bg:linear-gradient(135deg,#f0fdf4,#dcfce7);
+  --card:#fff;
+  --text:#0f172a;
+  --green:#16a34a;
+  --dark:#064e3b;
+  --border:#d1d5db;
+}
+
+body.dark{
+  --bg:linear-gradient(135deg,#020617,#0f172a);
+  --card:#1e293b;
+  --text:#e5e7eb;
+  --green:#22c55e;
+  --dark:#020617;
+  --border:#334155;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.4s;
+}
+
+.card{
+  max-width:520px;
+  width:100%;
+  background:#fff;
+  padding:40px;
+  border-radius:18px;
+  box-shadow:0 25px 60px rgba(0,0,0,0.18);
+  animation:fadeUp .6s ease;
+}
+
+h2{
+  color:var(--dark);
+  margin-bottom:25px;
+  text-align:center;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #d1d5db;
+  font-size:15px;
+}
+
+.single{margin-top:15px}
+
+button{
+  width:100%;
+  margin-top:18px;
+  padding:13px;
+  background:var(--green);
+  border:none;
+  color:white;
+  border-radius:8px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:hover{background:#15803d}
+
+.link{
+  text-align:center;
+  margin-top:18px;
+  font-size:14px;
+}
+
+.link a{
+  color:var(--green);
+  font-weight:600;
+  text-decoration:none;
+}
+
+/* OTP SECTION */
+.otp-box{
+  display:none;
+  margin-top:20px;
+  padding:15px;
+  border-radius:10px;
+  background:#ecfdf5;
+}
+
+.otp-box input{
+  text-align:center;
+  letter-spacing:8px;
+  font-size:18px;
+}
+
+.success{
+  display:none;
+  margin-top:10px;
+  color:#15803d;
+  font-weight:600;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+<script src="{% static 'js/script.js' %}" defer></script>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Create Account</h2>
+
+  <form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+    {% if form.errors %}
+      <div style="color:#b91c1c;margin-bottom:10px">Please fix the errors below.</div>
+    {% endif %}
+
+    <div class="grid">
+      <input type="text" name="first_name" placeholder="First Name" value="{{ request.POST.first_name }}">
+      <input type="text" name="last_name" placeholder="Last Name" value="{{ request.POST.last_name }}">
+    </div>
+
+    <div class="single">
+      <input type="email" name="username" placeholder="Email Address (used as username)" value="{{ request.POST.username }}" required>
+    </div>
+
+    <div class="single">
+      <input type="password" name="password1" placeholder="Password" required>
+    </div>
+
+    <div class="single">
+      <input type="password" name="password2" placeholder="Confirm Password" required>
+    </div>
+
+    <button type="submit">Create Account</button>
+
+    <div class="link">
+      Already have an account?
+      <a href="{% url 'login' %}">Login</a>
+    </div>
+  </form>
+</div>
+
+<script>
+function sendOTP(){
+  const mobile=document.getElementById("mobile").value;
+  if(mobile===""){
+    alert("Please enter mobile number");
+    return;
+  }
+  alert("📩 OTP sent to mobile number");
+  document.getElementById("otpBox").style.display="block";
+}
+
+function verifyOTP(){
+  document.getElementById("otpMsg").style.display="block";
+  setTimeout(()=>{
+    alert("🎉 Registration Successful");
+  },800);
+}
+</script>
+
+</body>
+</html>

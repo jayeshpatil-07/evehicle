@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Charging Locator</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+/* ================= THEME COLORS ================= */
+:root {
+  --bg: #f3fdf6;
+  --card: #ffffff;
+  --text: #1f2937;
+  --primary: #22c55e;
+  --header: #15803d;
+  --border: #e5e7eb;
+}
+
+.dark {
+  --bg: #020617;
+  --card: #0f172a;
+  --text: #e5e7eb;
+  --primary: #22c55e;
+  --header: #052e16;
+  --border: #1e293b;
+}
+
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ================= HEADER ================= */
+header {
+  background: var(--header);
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+nav a {
+  color: white;
+  margin-left: 18px;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+nav a:hover {
+  opacity: 0.85;
+}
+
+.theme-toggle {
+  background: white;
+  color: var(--header);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ================= SEARCH ================= */
+.toolbar {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar input, .toolbar select {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.toolbar button {
+  padding: 12px 20px;
+  background: var(--primary);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ================= MAIN ================= */
+.main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 25px;
+}
+
+.card {
+  background: var(--card);
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  animation: fadeUp 0.8s ease;
+}
+
+.station {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.fast { color: #16a34a; font-weight: bold; }
+.normal { color: #2563eb; font-weight: bold; }
+
+.map iframe {
+  width: 100%;
+  height: 360px;
+  border: none;
+  border-radius: 12px;
+}
+
+/* ================= FOOTER ================= */
+footer {
+  background: var(--header);
+  color: #d1fae5;
+  text-align: center;
+  padding: 14px;
+}
+
+/* ================= ANIMATION ================= */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
+/* ================= BOOK SLOT BUTTON THEME ================= */
+
+.btn{
+  display:inline-block;
+  width:100%;
+  text-align:center;
+  padding:14px 0;
+  margin-top:12px;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:600;
+  color:white;
+  text-decoration:none;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow:0 10px 25px rgba(34,197,94,.35);
+  transition:.3s ease;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 35px rgba(34,197,94,.45);
+}
+
+/* LOGIN TO BOOK VARIANT */
+.btn.login{
+  background:linear-gradient(135deg,#6366f1,#7c3aed);
+  box-shadow:0 10px 25px rgba(99,102,241,.35);
+}
+
+.btn.login:hover{
+  box-shadow:0 15px 35px rgba(99,102,241,.45);
+}
+
+</style>
+ <script src="{% static 'js/script.js' %}" defer></script>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="logo">⚡ EV Charging Locator</div>
+
+  <!-- ✅ FIXED NAVBAR -->
+ <nav>
+  <a href="{% url 'home' %}">🏠 Home</a>
+  <a href="{% url 'booking' %}">📅 Book Slot</a>
+  <a href="{% url 'login' %}">🔐 Login</a>
+  <a href="{% url 'register' %}">📝 Register</a>
+ <a href="{% url 'admin:index' %}">⚙️ Admin</a>
+
+ 
+
+</nav>
+
+
+  <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+</header>
+
+<!-- ================= SEARCH ================= -->
+<div class="toolbar">
+  <input id="city" placeholder="Search city">
+  <select>
+    <option>All Chargers</option>
+    <option>Fast Charger</option>
+    <option>Normal Charger</option>
+  </select>
+  <button onclick="searchStations()">Search</button>
+</div>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+
+  <div class="card">
+    <h3>Nearby Charging Stations</h3>
+    <div class="stations-list">
+
+  {% for station in stations %}
+<div class="station-card">
+    <h3>{{ station.name }}</h3>
+    <p>{{ station.city }}</p>
+    <p>{{ station.address }}</p>
+
+    <a href="{% url 'booking' %}" class="btn"></a>
+   {% if user.is_authenticated %}
+  <a href="{% url 'booking' %}" class="btn">Book Slot</a>
+{% else %}
+  <a href="{% url 'login' %}?next=/booking/" class="btn login">Login to Book</a>
+{% endif %}
+
+
+</div>
+{% empty %}
+<p>No charging stations available.</p>
+{% endfor %}
+
+
+</div>
+
+    <div id="stations"></div>
+  </div>
+
+  <div class="card map">
+    <iframe id="map"
+      src="https://maps.google.com/maps?q=Pune%20EV%20charging&t=&z=13&output=embed">
+    </iframe>
+  </div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+©  EV Charging Locator |
+</footer>
+
+<script>
+/* ================= STATION DATA ================= */
+const data = [
+  { name: "GreenCharge Hub", type: "Fast", distance: "2.5 km" },
+  { name: "EV Power Station", type: "Normal", distance: "4.1 km" }
+];
+
+/* ================= SEARCH ================= */
+function searchStations() {
+  const list = document.getElementById("stations");
+  list.innerHTML = "";
+
+  data.forEach(s => {
+    list.innerHTML += `
+      <div class="station">
+        <strong>${s.name}</strong><br>
+        <span class="${s.type === 'Fast' ? 'fast' : 'normal'}">${s.type}</span>
+        • ${s.distance}
+      </div>
+    `;
+  });
+
+  const city = document.getElementById("city").value || "Pune";
+  document.getElementById("map").src =
+    `https://maps.google.com/maps?q=${city}%20EV%20charging&t=&z=13&output=embed`;
+}
+
+/* ================= THEME ================= */
+(function () {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+  }
+})();
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+</script>
+
+</body>
+</html>

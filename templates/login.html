@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | EV Charging Locator</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+:root{
+  --bg:linear-gradient(135deg,#ecfdf5,#d1fae5);
+  --card:#fff;
+  --text:#0f172a;
+  --green:#16a34a;
+  --dark:#064e3b;
+  --border:#d1d5db;
+}
+
+body.dark{
+  --bg:linear-gradient(135deg,#020617,#0f172a);
+  --card:#1e293b;
+  --text:#e5e7eb;
+  --green:#22c55e;
+  --dark:#020617;
+  --border:#334155;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.4s;
+}
+
+.container{
+  display:flex;
+  max-width:900px;
+  width:100%;
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 25px 60px rgba(0,0,0,0.18);
+}
+
+/* LEFT PANEL */
+.left{
+  flex:1;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:white;
+  padding:50px 40px;
+  position:relative;
+}
+
+.left h1{font-size:28px;margin-bottom:15px}
+.left p{font-size:15px;line-height:1.6}
+
+.toggle{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:white;
+  color:#111;
+  border-radius:20px;
+  padding:6px 12px;
+  font-size:13px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* RIGHT PANEL */
+.right{
+  flex:1;
+  padding:45px 40px;
+}
+
+.right h2{
+  color:var(--dark);
+  margin-bottom:25px;
+}
+
+.input-group{margin-bottom:18px}
+
+label{
+  font-size:13px;
+  font-weight:600;
+  color:#374151;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #d1d5db;
+  font-size:15px;
+}
+
+input:focus{
+  outline:none;
+  border-color:var(--green);
+}
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  margin-bottom:18px;
+}
+
+.actions a{
+  color:var(--green);
+  text-decoration:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button{
+  width:100%;
+  padding:13px;
+  background:var(--green);
+  border:none;
+  color:white;
+  border-radius:8px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:hover{background:#15803d}
+
+.extra{
+  margin-top:18px;
+  text-align:center;
+  font-size:14px;
+}
+
+.extra a{
+  color:var(--green);
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,.45);
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-content{
+  background:#fff;
+  padding:30px;
+  width:90%;
+  max-width:380px;
+  border-radius:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
+  animation:fadeUp .4s ease;
+}
+
+.modal-content h3{
+  margin-bottom:15px;
+  color:var(--dark);
+}
+
+.close{
+  float:right;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.success{
+  margin-top:10px;
+  color:#15803d;
+  font-weight:600;
+  display:none;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .container{flex-direction:column}
+  .left{text-align:center;padding:30px}
+}
+</style>
+<script src="{% static 'js/script.js' %}" defer></script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="left">
+    <div class="toggle" onclick="toggleTheme()">🌙 Theme</div>
+    <h1>⚡ EV Charging Locator</h1>
+    <p>
+      Smart platform to locate charging stations,
+      book slots, and manage EV charging efficiently.
+    </p>
+  </div>
+
+  <div class="right">
+    <h2>Login to your account</h2>
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      {% if messages %}
+        {% for message in messages %}
+          <div style="color:#b91c1c;margin-bottom:10px">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="username or email" value="{{ request.POST.username }}" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required>
+      </div>
+
+      <div class="actions">
+        <span></span>
+        <a onclick="openModal()">Forgot password?</a>
+      </div>
+
+      <button type="submit">Login</button>
+
+      <div class="extra">
+        Don’t have an account?
+        <a href="{% url 'register' %}">Register</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal" id="forgotModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+    <h3>Reset Password</h3>
+    <input type="email" placeholder="Enter registered email">
+    <button style="margin-top:15px" onclick="sendLink()">Send Reset Link</button>
+    <div class="success" id="successMsg">
+      ✅ Password reset link sent to your email
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(){
+  document.getElementById("forgotModal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("forgotModal").style.display="none";
+}
+
+function sendLink(){
+  document.getElementById("successMsg").style.display="block";
+}
+</script>
+
+</body>
+</html>
